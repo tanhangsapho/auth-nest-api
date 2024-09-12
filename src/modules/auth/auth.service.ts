@@ -1,35 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserService } from '../users/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { IUser } from '../users/interface/user.type';
+import { ILogin, IValidate } from './interface/auth.type';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private readonly _usersService: UserService,
-        private readonly _jwtService: JwtService,
-      ) {}
-      async validateUser(email: string, password: string): Promise<any> {
-        const user = await this._usersService.findByEmail(email);
-        if (user && (await bcrypt.compare(password, user.password))) {
-          const { password, ...result } = user;
-          return result;
-        }
-        return null;
-      }
-    
-      async login(user: any) {
-        const payload = { username: user.email, sub: user.id };
-        return {
-          access_token: this._jwtService.sign(payload),
-        };
-      }
-    
-      async register(email: string, password: string) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        return this._usersService.createUser(
-          email,
-          hashedPassword,
-        );
-      }
+  constructor(
+    private readonly _usersService: UserService,
+    private readonly _jwtService: JwtService,
+  ) {}
+  async validateUser(userData: IValidate): Promise<any> {
+    const user = await this._usersService.findByEmail(userData.email);
+    if (!user) {
+      throw new NotFoundException('Credentials Fail');
+    }
+    if (!(await bcrypt.compare(userData.password, user.password))) {
+      throw new BadRequestException('Email or Password are incorrect');
+    }
+    return { id: user.id, userName: user.userName };
+  }
+  async login(user: ILogin) {
+    const payload = { userName: user, sub: user.id };
+    return {
+      access_token: this._jwtService.sign(payload),
+    };
+  }
+  async register(userData: IUser) {
+    const existingUser = await this._usersService.findByEmail(userData.email);
+    if (existingUser) {
+      throw new BadRequestException('Email already have,Please try another email.');
+    }
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    return this._usersService.createUser({
+      userName: userData.userName,
+      email: userData.email,
+      password: hashedPassword,
+    });
+  }
 }
