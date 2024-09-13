@@ -20,8 +20,7 @@ import { UserModule } from '../users/user.module';
         return {
           secret: configService.get<string>('JWT_SECRET_KEY'),
           signOptions: {
-            expiresIn: configService.get<string>('JWT_EXPIRATION_TIME'), 
-
+            expiresIn: configService.get<string>('JWT_EXPIRATION_TIME'),
           },
         };
       },

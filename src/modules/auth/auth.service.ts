@@ -34,7 +34,9 @@ export class AuthService {
   async register(userData: IUser) {
     const existingUser = await this._usersService.findByEmail(userData.email);
     if (existingUser) {
-      throw new BadRequestException('Email already have,Please try another email.');
+      throw new BadRequestException(
+        'Email already have,Please try another email.',
+      );
     }
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     return this._usersService.createUser({

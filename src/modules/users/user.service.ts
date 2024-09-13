@@ -8,7 +8,7 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async createUser(userData: IUser): Promise<User> {
-    const { email, password,userName } = userData; // Destructure email and password from userData
+    const { email, password, userName } = userData; // Destructure email and password from userData
 
     return this.prisma.user.create({
       data: {

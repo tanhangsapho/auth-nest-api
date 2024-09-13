@@ -8,18 +8,22 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './interface/SignUp.validate';
 import { AuthGuard } from '../common/guard/jwt.guard';
-import { log } from 'console';
+import { LoginSchema, SignUpSchema } from './schemas/login.schema';
+import { IValidate } from './interface/auth.type';
+import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
+import { IUser } from '../users/interface/user.type';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly _authService: AuthService) {}
   @Post('/login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: { email: string; password: string }) {
+  @UsePipes(new ZodValidationPipe(LoginSchema))
+  async login(@Body() loginDto: IValidate) {
     const user = await this._authService.validateUser({
       email: loginDto.email,
       password: loginDto.password,
@@ -31,7 +35,8 @@ export class AuthController {
   }
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
-  async SignUp(@Body() userDto: SignUpDto) {
+  @UsePipes(new ZodValidationPipe(SignUpSchema))
+  async SignUp(@Body() userDto: IUser) {
     try {
       const data = await this._authService.register({
         userName: userDto.userName,
