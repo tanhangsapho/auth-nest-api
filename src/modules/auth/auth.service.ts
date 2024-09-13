@@ -23,7 +23,7 @@ export class AuthService {
     if (!(await bcrypt.compare(userData.password, user.password))) {
       throw new BadRequestException('Email or Password are incorrect');
     }
-    return { id: user.id, userName: user.userName };
+    return { id: user.id, data: user.userName };
   }
   async login(user: ILogin) {
     const payload = { userName: user, sub: user.id };

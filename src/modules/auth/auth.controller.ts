@@ -36,12 +36,12 @@ export class AuthController {
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ZodValidationPipe(SignUpSchema))
-  async SignUp(@Body() userDto: IUser) {
+  async SignUp(@Body() user: IUser) {
     try {
       const data = await this._authService.register({
-        userName: userDto.userName,
-        email: userDto.email,
-        password: userDto.password,
+        userName: user.userName,
+        email: user.email,
+        password: user.password,
       });
       return {
         message: 'SignUp Successfully',

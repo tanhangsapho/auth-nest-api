@@ -28,6 +28,6 @@ import { UserModule } from '../users/user.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [PassportModule.register({ defaultStrategy: 'jwt' })],
+  exports: [AuthService, JwtStrategy, JwtModule, PassportModule],
 })
 export class AuthModule {}
