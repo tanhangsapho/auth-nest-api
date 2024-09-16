@@ -12,20 +12,20 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid()) @db.Uuid
   userName  String
   email     String   @unique
-  password  String
+  password  String?
   createdAt DateTime @default(now())
-  posts Post[]
+  posts     Post[]
 }
+
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid()) @db.Uuid
   title     String
   content   String
   createdAt DateTime @default(now())
-  userId    Int
+  userId    String   @db.Uuid  // Ensure userId is of type UUID
   user      User     @relation(fields: [userId], references: [id])
 }

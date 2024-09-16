@@ -8,12 +8,15 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { IUser } from '../users/interface/user.type';
 import { ILogin, IValidate } from './interface/auth.type';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly _usersService: UserService,
     private readonly _jwtService: JwtService,
+    readonly configService: ConfigService
+
   ) {}
   async validateUser(userData: IValidate): Promise<any> {
     const user = await this._usersService.findByEmail(userData.email);
@@ -45,4 +48,13 @@ export class AuthService {
       password: hashedPassword,
     });
   }
-}
+
+  async validateGoogleUser(user: any) {
+    // Find or create the user in the database
+    const payload = { email: user.email, sub: user.id };
+    return {
+      access_token: this._jwtService.sign(payload),
+    };
+  }
+  }
+

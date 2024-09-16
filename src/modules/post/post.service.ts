@@ -19,7 +19,7 @@ export class PostService {
       throw error;
     }
   }
-  async findByID(postId: number): Promise<Post> {
+  async findByID(postId: string): Promise<Post> {
     try {
       const post = this.prisma.post.findUnique({ where: { id: postId } });
       if (!post) {
@@ -30,7 +30,7 @@ export class PostService {
       throw error;
     }
   }
-  async updatePost(postId: number, postData: CreatePostEntity): Promise<Post> {
+  async updatePost(postId: string, postData: CreatePostEntity): Promise<Post> {
     try {
       const post = await this.prisma.post.update({
         where: { id: postId },
@@ -45,7 +45,7 @@ export class PostService {
       throw error;
     }
   }
-  async deletePost(postId: number) {
+  async deletePost(postId: string) {
     try {
       const post = await this.prisma.post.delete({
         where: { id: postId },

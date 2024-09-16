@@ -21,7 +21,7 @@ export class PostController {
   async createPost(@Body() createPost: CreatePostEntity, @Req() req: any) {
     try {
       const userId = req.user.sub;
-      return this._postService.createPost({
+      return await this._postService.createPost({
         ...createPost,
         userId,
       });
@@ -30,9 +30,9 @@ export class PostController {
     }
   }
   @Get('/:id')
-  async findById(@Param('id') id: number) {
+  async findById(@Param('id') id: string) {
     try {
-      return this._postService.findByID(id);
+      return await this._postService.findByID(id);
     } catch (error) {
       throw error;
     }
@@ -40,18 +40,23 @@ export class PostController {
   @Patch('/:id')
   @UseGuards(AuthGuard)
   async updatePost(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updatePost: CreatePostEntity,
   ) {
     try {
-      return this._postService.updatePost(id, updatePost);
+      return await this._postService.updatePost(id, updatePost);
     } catch (error) {
       throw error;
     }
   }
   @Delete('/:id')
   @UseGuards(AuthGuard) // Protect the route
-  async deletePost(@Param('id') id: number) {
-    return this._postService.deletePost(id);
+  async deletePost(@Param('id') id: string) {
+    try {
+      await this._postService.deletePost(id);
+      return;
+    } catch (error) {
+      throw error;
+    }
   }
 }
