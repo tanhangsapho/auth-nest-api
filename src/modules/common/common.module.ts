@@ -3,6 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   providers: [],
-  imports: [ConfigModule.forRoot()]
+  imports: [ConfigModule.forRoot()],
 })
 export class CommonModule {}

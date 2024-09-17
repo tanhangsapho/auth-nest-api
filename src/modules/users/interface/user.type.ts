@@ -4,7 +4,6 @@ export interface IUser {
   password?: string;
 }
 
-
 // export interface GoogleOAuth extends CommonEntity {
 //   email: string,
 //   firstname: string

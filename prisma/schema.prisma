@@ -17,8 +17,14 @@ model User {
   userName  String
   email     String   @unique
   password  String?
-  createdAt DateTime @default(now())
-  posts     Post[]
+  googleId       String?  @unique
+  isVerified     Boolean  @default(false) 
+  otpSecret      String? 
+  otpExpiry      DateTime?
+  otp            String? 
+  picture        String?  
+  createdAt      DateTime @default(now())
+  posts          Post[]
 }
 
 model Post {

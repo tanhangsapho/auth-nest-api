@@ -9,9 +9,11 @@ import { JwtStrategy } from '../common/strategy/jwt.strategy';
 import { UserModule } from '../users/user.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GoogleStrategy } from '../common/strategy/google.strategy';
+import { OtpModule } from './otp/otp.module';
 
 @Module({
   imports: [
+    OtpModule,
     ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -29,7 +31,7 @@ import { GoogleStrategy } from '../common/strategy/google.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy,PrismaService,GoogleStrategy],
-  exports: [AuthService,JwtStrategy, JwtModule,PassportModule,],
+  providers: [AuthService, JwtStrategy, PrismaService, GoogleStrategy],
+  exports: [AuthService, JwtStrategy, JwtModule, PassportModule],
 })
 export class AuthModule {}

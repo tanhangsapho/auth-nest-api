@@ -15,8 +15,7 @@ export class AuthService {
   constructor(
     private readonly _usersService: UserService,
     private readonly _jwtService: JwtService,
-    readonly configService: ConfigService
-
+    readonly configService: ConfigService,
   ) {}
   async validateUser(userData: IValidate): Promise<any> {
     const user = await this._usersService.findByEmail(userData.email);
@@ -56,5 +55,4 @@ export class AuthService {
       access_token: this._jwtService.sign(payload),
     };
   }
-  }
-
+}

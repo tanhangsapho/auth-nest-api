@@ -5,9 +5,7 @@ import { IUser } from './interface/user.type';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createUser(userData: IUser): Promise<User> {
     const { email, password, userName } = userData; // Destructure email and password from userData
@@ -20,7 +18,6 @@ export class UserService {
       },
     });
   }
- 
 
   async findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
