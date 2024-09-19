@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation"; 
 import axios from "axios";
@@ -11,11 +11,6 @@ export default function Login() {
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    // No-op to ensure the router is mounted
-  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -28,25 +23,27 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-  
     try {
-      const response = await axios.post("http://localhost:4000/api/auth/login", formData, {
+      const response = await axios.post("http://localhost:4000/api/auth/login", JSON.stringify(formData), {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true, 
       });
-      console.log(response)
-      const data = response.data.access_token; // Axios automatically parses the JSON response
-      // Store token in localStorage or cookie (as per your choice)
-      localStorage.setItem("token", data);
-  
-      // Redirect to home page upon successful login
-      window.location.href = "/";
-    } catch (error) {
-      setError("Invalid email or password");
+      if (response.status === 200) {
+        window.location.href = "/";
+      }
+    } catch (error: unknown | any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
-
+  const handleGoogleSignIn = () => {
+     window.location.href = ("http://localhost:4000/api/auth/google");
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -55,11 +52,17 @@ export default function Login() {
           Welcome back
         </h2>
         <form onSubmit={handleSubmit}>
+        {error && (
+          <div className="mb-4 text-red-500 text-center">
+            {error}
+          </div>
+        )}
           <div className="mb-4">
             <label className="block text-gray-800">Email</label>
             <input
               type="email"
               name="email"
+              placeholder="Email address"
               value={formData.email}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
@@ -71,6 +74,7 @@ export default function Login() {
             <input
               type="password"
               name="password"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
@@ -93,7 +97,7 @@ export default function Login() {
         <div className="flex flex-col gap-4 mt-5">
           <button
             type="button"
-            // onClick={handleGoogleSignup}
+            onClick={handleGoogleSignIn}
             className="flex items-center justify-start gap-5 w-full bg-white text-gray-700 border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-100 transition duration-200"
           >
             <svg

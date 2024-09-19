@@ -45,12 +45,12 @@ export class OtpService {
       where: { email },
     });
     if (!user || user.otp !== otp) {
-        throw new BadRequestException('OTP invalid');
-      }
-      const currentTime = new Date();
-      if (user.otpExpiry < currentTime) {
-        throw new BadRequestException('OTP expired');
-      }
+      throw new BadRequestException('OTP invalid');
+    }
+    const currentTime = new Date();
+    if (user.otpExpiry < currentTime) {
+      throw new BadRequestException('OTP expired');
+    }
 
     return user.otpSecret === otp;
   }

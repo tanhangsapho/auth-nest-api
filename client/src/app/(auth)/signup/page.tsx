@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    name: "",
+    userName: "",
     email: "",
     password: "",
   });
@@ -23,6 +23,9 @@ export default function Signup() {
     // Logic to handle form submission and send data to backend
     console.log(formData);
   };
+  const handleGoogleSignIn = () => {
+    window.location.href = ("http://localhost:4000/api/auth/google");
+ };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -37,7 +40,7 @@ export default function Signup() {
             <input
               type="text"
               name="name"
-              value={formData.name}
+              value={formData.userName}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
               required
@@ -82,7 +85,7 @@ export default function Signup() {
         <div className="flex flex-col gap-4 mt-5">
           <button
             type="button"
-            // onClick={handleGoogleSignup}
+            onClick={handleGoogleSignIn}
             className="flex items-center justify-start gap-5 w-full bg-white text-gray-700 border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-100 transition duration-200"
           >
             <svg

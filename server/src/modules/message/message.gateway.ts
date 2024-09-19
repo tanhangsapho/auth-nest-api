@@ -1,4 +1,10 @@
-import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MessageService } from './message.service';
 
@@ -11,10 +17,15 @@ export class MessageGateway {
 
   @SubscribeMessage('sendMessage')
   async handleMessage(
-    @MessageBody() data: { senderId: string; receiverId: string; content: string },
+    @MessageBody()
+    data: { senderId: string; receiverId: string; content: string },
     @ConnectedSocket() client: Socket,
   ) {
-    const message = await this.messageService.createMessage(data.senderId, data.receiverId, data.content);
+    const message = await this.messageService.createMessage(
+      data.senderId,
+      data.receiverId,
+      data.content,
+    );
 
     // Emit the message to the receiver's room
     this.server.to(data.receiverId).emit('receiveMessage', message);
