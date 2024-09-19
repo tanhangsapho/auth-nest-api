@@ -1,13 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; 
+import axios from "axios";
 
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    // No-op to ensure the router is mounted
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -17,11 +25,28 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Logic to handle form submission and send data to backend
-    console.log(formData);
+    setError(null);
+  
+    try {
+      const response = await axios.post("http://localhost:4000/api/auth/login", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response)
+      const data = response.data.access_token; // Axios automatically parses the JSON response
+      // Store token in localStorage or cookie (as per your choice)
+      localStorage.setItem("token", data);
+  
+      // Redirect to home page upon successful login
+      window.location.href = "/";
+    } catch (error) {
+      setError("Invalid email or password");
+    }
   };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -37,7 +62,7 @@ export default function Login() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
               required
             />
           </div>
@@ -48,7 +73,7 @@ export default function Login() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
               required
             />
           </div>

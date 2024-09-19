@@ -10,6 +10,7 @@ import {
   UseGuards,
   UsePipes,
   Req,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '../common/guard/jwt.guard';
@@ -68,11 +69,9 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleAuthRedirect(@Req() req) {
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    const token = await this._authService.validateGoogleUser(req.user);
     // Google redirects here after successful authentication
-    return {
-      message: 'User information from Google',
-      user: req.user, // user will be populated by Passport using the validate method in GoogleStrategy
-    };
+    res.redirect(`http://localhost:3000/chat?token=${token}`);
   }
 }
