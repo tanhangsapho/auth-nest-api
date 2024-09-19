@@ -58,7 +58,7 @@ export default function Login() {
           </div>
         )}
           <div className="mb-4">
-            <label className="block text-gray-800">Email</label>
+            {/* <label className="block text-gray-800">Email</label> */}
             <input
               type="email"
               name="email"
@@ -70,7 +70,7 @@ export default function Login() {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-800">Password</label>
+            {/* <label className="block text-gray-800">Password</label> */}
             <input
               type="password"
               name="password"

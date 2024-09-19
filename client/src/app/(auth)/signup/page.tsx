@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import axios from "axios";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ export default function Signup() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -18,10 +20,27 @@ export default function Signup() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Logic to handle form submission and send data to backend
-    console.log(formData);
+    setError(null);
+    try{
+      const response = await axios.post("http://localhost:4000/api/auth/signup", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 201) {
+        console.log("Signup successful:", response.data.message);
+        // Redirect or show a success message here
+        window.location.href = "/login"; 
+      }
+    }catch(error: unknown | any){
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message); // Set the error message from backend
+      } else {
+        setError("Signup failed. Please try again."); // Generic error message
+      }
+    }
   };
   const handleGoogleSignIn = () => {
     window.location.href = ("http://localhost:4000/api/auth/google");
@@ -35,22 +54,29 @@ export default function Signup() {
         </h2>
 
         <form onSubmit={handleSubmit}>
+        {error && (
+          <div className="mb-4 text-red-500 text-center">
+            {error}
+          </div>
+        )}
           <div className="mb-4">
-            <label className="block text-gray-800">Name</label>
+            {/* <label className="block text-gray-800">Username</label> */}
             <input
               type="text"
-              name="name"
+              name="userName"
               value={formData.userName}
+              placeholder="Username"
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-800">Email</label>
+            {/* <label className="block text-gray-800">Email</label> */}
             <input
               type="email"
               name="email"
+              placeholder="Email"
               value={formData.email}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
@@ -58,10 +84,11 @@ export default function Signup() {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-800">Password</label>
+            {/* <label className="block text-gray-800">Password</label> */}
             <input
               type="password"
               name="password"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800"
