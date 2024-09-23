@@ -42,10 +42,9 @@ export class MessageGateway {
     @ConnectedSocket() client: Socket,
   ) {
     client.join(userId); // Join the room with the user's ID
-    console.log(`${userId} joined their room`);
 
     // Fetch chat history for the user and emit it back
     const messages = await this.messageService.getMessagesForUser(userId);
-    client.emit('chatHistory', messages); // Send chat history to the client
+    client.emit('chatHistory', messages);
   }
 }
