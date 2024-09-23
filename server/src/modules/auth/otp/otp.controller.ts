@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Post } from '@nestjs/common';
 import { OtpService } from './otp.service';
 import { UserService } from 'src/modules/users/user.service';
 
@@ -10,18 +10,19 @@ export class OtpController {
   ) {}
   @Post('send')
   async sendOtp(@Body('email') email: string) {
-    // Find the user by email
+
     const user = await this.userService.findByEmail(email);
-    // If the user is not found, return an error response
+
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
-    // Generate OTP and OTP expiry
+    
     const { otp, otpExpiry } = this._otpService.generateOtp();
-    // Send OTP via email (implement this logic in sendOtp method of your service)
+
     await this._otpService.sendOtp(email, otp);
-    // Store OTP and its expiry for the user using userId
+
     await this._otpService.storeOtp(user.id, otp, otpExpiry);
+
     return { message: 'OTP sent successfully' };
   }
 
@@ -32,8 +33,7 @@ export class OtpController {
     if (!isValid) {
       return { message: 'Invalid OTP' };
     }
-    // Mark user as verified if OTP is valid
-    // You can call another service or directly update the user's isVerified field here
+
     return { message: 'OTP verified successfully' };
   }
 }
